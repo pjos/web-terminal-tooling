@@ -110,6 +110,13 @@ wget -q -O- "https://github.com/kubernetes-sigs/kustomize/releases/download/kust
 rm -rf "${TMPDIR:?}"/*
 chmod -R +x "${CONTAINER_USR_BIN_DIR}"
 
+echo "Downloading yq ${YQ_VER}"
+mkdir -p "$CONTAINER_OPT_DIR/yq/"
+wget -q -O- "https://github.com/mikefarah/yq/releases/download/v${YQ_VER}/yq_linux_amd64.tar.gz" | \
+  tar xz -C "$CONTAINER_OPT_DIR/yq/"
+rm -rf "${TMPDIR:?}"/*
+chmod -R +x "${CONTAINER_USR_BIN_DIR}"
+
 cd "$PROJECT_ROOT"
 tar -czf container-root-x86_64.tgz -C "$CONTAINER_ROOT_RELATIVE_PATH" .
 
@@ -127,6 +134,7 @@ rm -f rh-manifest.txt || true
   echo "rhoas ${RHOAS_VER} https://github.com/redhat-developer/app-services-cli/tree/v${RHOAS_VER}"
   echo "submariner ${SUBMARINER_VER} https://github.com/submariner-io/subctl/tree/v${SUBMARINER_VER}"
   echo "kubevirt ${KUBEVIRT_VER} https://github.com/kubevirt/kubevirt/tree/v${KUBEVIRT_VER}"
+  echo "yq ${YQ_VER} https://github.com/mikefarah/yq/tree/v${KUBEVIRT_VER}"
 } >> rh-manifest.txt
 
 rm -rf "$CONTAINER_ROOT_DIR"

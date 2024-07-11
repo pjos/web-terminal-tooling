@@ -1,0 +1,1 @@
+podman run --replace -it --rm --name terminal-tooling --userns keep-id -e "DISPLAY" -e "XAUTH=$(cat ~/.Xauthority | base64 -w 0)" --net=host --security-opt label=type:container_runtime_t -v /tmp/.X11-unix:/tmp/.X11-unix:ro -v /home/adminuser/data:/home/user localhost/web-terminal-tooling:local bash

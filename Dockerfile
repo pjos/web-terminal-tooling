@@ -1,5 +1,4 @@
-# https://access.redhat.com/containers/?tab=tags#/registry.access.redhat.com/ubi8-minimal
-FROM registry.access.redhat.com/ubi8-minimal:8.9-1137
+FROM registry.access.redhat.com/ubi9/ubi:latest
 USER 0
 
 # The $INITIAL_CONFIG dir stores dotfiles (e.g. .bashrc) for the web terminal, which
@@ -12,9 +11,12 @@ ENV DOWNLOADED_BINARIES=/wto/bin/downloaded
 ENV HOME=/home/user
 WORKDIR /home/user
 
+RUN rpm --import https://packages.microsoft.com/keys/microsoft.asc
+RUN sh -c 'echo -e "[code]\nname=Visual Studio Code\nbaseurl=https://packages.microsoft.com/yumrepos/vscode\nenabled=1\ngpgcheck=1\ngpgkey=https://packages.microsoft.com/keys/microsoft.asc" > /etc/yum.repos.d/vscode.repo'
+
 RUN mkdir -p /home/user $INITIAL_CONFIG $WRAPPER_BINARIES $DOWNLOADED_BINARIES && \
-    microdnf update -y --disablerepo=* --enablerepo=ubi-8-appstream-rpms --enablerepo=ubi-8-baseos-rpms && \
-    microdnf install -y --disablerepo=* --enablerepo=ubi-8-appstream-rpms --enablerepo=ubi-8-baseos-rpms \
+    dnf update -y && \
+    dnf install -y  \
     # bash completion tools
     bash-completion ncurses pkgconf-pkg-config findutils \
     # zsh
@@ -22,8 +24,10 @@ RUN mkdir -p /home/user $INITIAL_CONFIG $WRAPPER_BINARIES $DOWNLOADED_BINARIES &
     # terminal-based editors
     vi vim nano \
     # developer tools
-    curl tar git procps jq && \
-    microdnf -y clean all
+    tar git procps jq tmux\
+    # VSCode deps
+    xdg-utils libxkbfile code && \
+    dnf -y clean all
 
 ADD container-root-x86_64.tgz /
 # Propagate tools to path and install bash autocompletion
@@ -37,6 +41,8 @@ RUN \
     ln -s /opt/kubevirt/virtctl /usr/local/bin/virtctl && \
     # install kustomize
     ln -s /opt/kustomize/kustomize /usr/local/bin/kustomize && \
+    # install yq
+    ln -s /opt/yq/yq_linux_amd64 /usr/local/bin/yq && \
     # install bash completions
     kubectl completion bash > $COMPDIR/kubectl && \
     oc completion bash > $COMPDIR/oc && \
@@ -64,7 +70,7 @@ RUN for f in "${HOME}" "${INITIAL_CONFIG}" "${WRAPPER_BINARIES}" "${DOWNLOADED_B
     echo "Installed tools:" && \
     cat /tmp/installed_tools.txt
 
-USER 1001
+USER 1001 
 
 ENV SHELL=/bin/bash
 ENV PATH="${WRAPPER_BINARIES}:${DOWNLOADED_BINARIES}:${PATH}"

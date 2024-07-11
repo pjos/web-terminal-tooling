@@ -26,4 +26,8 @@ find "$INITIAL_CONFIG" -mindepth 1 -exec cp -nrp {} "${HOME}/" \;
 # Have to close stdin because odo will prompt for telemetry even in an entrypoint
 /tmp/get-tooling-versions.sh 0<&- > /tmp/installed_tools.txt
 
+if [[ -n "$XAUTH" ]]; then
+  echo $XAUTH | base64 -d > ~/.Xauthority
+fi 
+
 exec "$@"

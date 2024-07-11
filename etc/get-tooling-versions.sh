@@ -70,4 +70,13 @@ JQ_VER=$(jq --version)
 JQ_VER=${JQ_VER#jq-}
 append_ver "jq       |${JQ_VER#v}        |jq"
 
+YQ_VER=$(yq --version | awk '{print $NF}')
+append_ver "yq       |${YQ_VER#v}        |yq"
+
+if command -v virtctl &>/dev/null; then
+  CODE_VER=$(code --version --no-sandbox --user-data-dir /tmp | head -1)
+  append_ver "code     |${CODE_VER#v}        |Visual Studio Code"
+fi
+
+
 echo -e "$INSTALLED_TOOLS" | column -t -s '|'
