@@ -134,7 +134,7 @@ rm -f rh-manifest.txt || true
   echo "rhoas ${RHOAS_VER} https://github.com/redhat-developer/app-services-cli/tree/v${RHOAS_VER}"
   echo "submariner ${SUBMARINER_VER} https://github.com/submariner-io/subctl/tree/v${SUBMARINER_VER}"
   echo "kubevirt ${KUBEVIRT_VER} https://github.com/kubevirt/kubevirt/tree/v${KUBEVIRT_VER}"
-  echo "yq ${YQ_VER} https://github.com/mikefarah/yq/tree/v${KUBEVIRT_VER}"
+  echo "yq ${YQ_VER} https://github.com/mikefarah/yq/tree/v${YQ_VER}"
 } >> rh-manifest.txt
 
 rm -rf "$CONTAINER_ROOT_DIR"
